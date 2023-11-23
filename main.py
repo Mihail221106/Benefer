@@ -1,7 +1,7 @@
 class SiteBuilder:
 
     def __init__(self):
-        self.code = ['<!DOCTYPE html>\n', '<html>\n', "\t<head>\n", '\t\t<style>\n', '\t\t</style>\n',
+        self.code = [['<!DOCTYPE html>\n'], '<html>\n', "\t<head>\n", '\t\t<style>\n', '\t\t</style>\n',
                      '\t\t<meta charset = "utf-8">\n', '\t</head>\n',
                      '\t<body>\n', '\t</body>\n', '</html>\n']
         self.prev = []

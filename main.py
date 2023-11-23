@@ -25,7 +25,7 @@ class SiteBuilder:
         s = [f'\t\t<div class="c{self.ind_class}" style = "position:absolute; left:{x[0]}{x[1]}; top:{y[0]}{y[1]}; \
              width:{width[0]}{width[1]};">\n'] + s + ['\t\t</div>\n']
         self.prev.append(s)
-        self.code = self.code[0:self.code.index('\t</body>\n')] + s + self.code[self.code.index('\t</body>\n'):]
+        self.code = self.code[0:self.code.index('\t</body>\n')] + [s] + self.code[self.code.index('\t</body>\n'):]
         self.ind_class += 1
 
     def image(self, src, width, height, x, y, title='picture', alt='picture', label='', lab_size=[16, 'pt'],
@@ -45,30 +45,21 @@ class SiteBuilder:
 
         self.prev.append(s)
 
-        self.code = self.code[0:self.code.index('\t</body>\n')] + s + self.code[self.code.index('\t</body>\n'):]
+        self.code = self.code[0:self.code.index('\t</body>\n')] + [s] + self.code[self.code.index('\t</body>\n'):]
         self.ind_class += 1
 
     def save(self, html):
         with open(f'{html}.html', 'w', encoding='UTF-8') as file:
             for cod in self.code:
-                if type(cod) == f'class ' + "'" + 'list' + "'" + '>':
-                    file.writelines(cod)
-                else:
-                    file.writelines(cod)
-
+                file.writelines(cod)
 
     def undo(self):
         if self.ind_class == 0:
             return
         self.ind_class -= 1
-        for text in self.code:
-            if text.find(f'class="c{self.ind_class}"') != -1:
-                i = self.code.index(text)
-                del self.code[i]
-                del self.code[i]
-                del self.code[i]
-                del self.code[i]
-                del self.code[i]
+        for cod in self.code[self.code.index('<\tbody>')+1:self.code.index('\t<body>')]:
+            if cod[0].find(f'class=c{self.ind_class}') != -1:
+                del self.code[self.code.index(cod)]
         if len(self.prev) != 0:
             self.prev.pop(-1)
 
@@ -84,5 +75,5 @@ sb.icon('icon.png')
 sb.paragraph(text='fdfasgdfafaggadgdagdagdgdg', font_size=[16, 'pt'], x=[10, 'vw'], y=[10, 'vh'], width=[90, 'vw'],
              color='black', font='Times New Roman')
 sb.image(src='L1.jpg', width=[50, 'vw'], height=[60, 'vh'], x=[20, 'vw'], y=[10, 'vh'], label='fds')
-sb.swap(1, 0)
+sb.undo()
 sb.save('site')

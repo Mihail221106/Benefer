@@ -50,7 +50,12 @@ class SiteBuilder:
 
     def save(self, html):
         with open(f'{html}.html', 'w', encoding='UTF-8') as file:
-            file.writelines(self.code)
+            for cod in self.code:
+                if type(cod) == f'class ' + "'" + 'list' + "'" + '>':
+                    file.writelines(cod)
+                else:
+                    file.writelines(cod)
+
 
     def undo(self):
         if self.ind_class == 0:

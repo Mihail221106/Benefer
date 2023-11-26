@@ -57,17 +57,32 @@ class SiteBuilder:
         if self.ind_class == 0:
             return
         self.ind_class -= 1
-        for cod in self.code[self.code.index('<\tbody>')+1:self.code.index('\t<body>')]:
-            if cod[0].find(f'class=c{self.ind_class}') != -1:
+        for i in range(self.code.index('\t<body>\n'), self.code.index('\t</body>\n')):
+            cod = self.code[i]
+            print(self.code.index(cod))
+            if cod[0].find(f'class="c{self.ind_class}"') != -1:
                 del self.code[self.code.index(cod)]
+                break
         if len(self.prev) != 0:
-            self.prev.pop(-1)
+            del self.prev[-1]
 
-    def swap(self, step_index, index):
+
+    def replace(self, step_index, index):
         step = self.prev[step_index]
         del self.prev[step_index]
         self.prev = self.prev[0:index] + [step] + self.prev[index:]
-
+        for i in range(0,len(self.prev)):
+            s = self.prev[i][0]
+            j=0
+            while s[j].isdigit() == False:
+                j += 1
+            l=0
+            while s[j:j+l].isnumeric():
+                l += 1
+            self.prev[i][0] = s[0:j] + str(i) + s[j+l+1:]
+        bdo = self.code.index(f'\t<body>\n')
+        bdc = self.code.index(f'\t</body>\n')
+        self.code = self.code[0:bdo+1] + self.prev + self.code[bdc:]
 
 sb = SiteBuilder()
 sb.page_name('Paaaaage')
@@ -75,5 +90,8 @@ sb.icon('icon.png')
 sb.paragraph(text='fdfasgdfafaggadgdagdagdgdg', font_size=[16, 'pt'], x=[10, 'vw'], y=[10, 'vh'], width=[90, 'vw'],
              color='black', font='Times New Roman')
 sb.image(src='L1.jpg', width=[50, 'vw'], height=[60, 'vh'], x=[20, 'vw'], y=[10, 'vh'], label='fds')
+sb.replace(step_index=1, index=0)
+print(sb.prev)
 sb.undo()
+print(sb.code)
 sb.save('site')
